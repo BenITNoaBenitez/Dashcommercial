@@ -25,7 +25,7 @@ export function AppSidebar() {
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar flex flex-col">
       {/* Brand */}
       <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
-        <img src="./noa-logo.png" alt="Logo Noa" className="h-9 w-auto object-contain" />
+        <img src="/Dashcommercial/noa-logo.png" alt="Logo Noa" className="h-9 w-auto object-contain" />
         <div>
           <p className="text-sm font-semibold text-sidebar-foreground leading-tight">Dashboard</p>
           <p className="text-xs text-sidebar-muted leading-tight">Commercial</p>
