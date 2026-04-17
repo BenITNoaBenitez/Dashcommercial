@@ -30,12 +30,10 @@ export function FileDropzone() {
   const { importData, updateSettings } = useData();
   const navigate = useNavigate();
 
-  // ── Load demo data ────────────────────────────────────────────────────────────
   const handleLoadDemo = useCallback(async () => {
     setIsDemoLoading(true);
     setError(null);
     try {
-      // Pre-fill margin settings
       updateSettings({ margesFamille: DEMO_SETTINGS_MARGES, objectifCA: 850_000 });
       await importData(DEMO_DATA);
       navigate('/dashboard');
@@ -46,7 +44,6 @@ export function FileDropzone() {
     }
   }, [importData, updateSettings, navigate]);
 
-  // ── Process real file ─────────────────────────────────────────────────────────
   const processFile = useCallback(async (file: File) => {
     setIsLoading(true);
     setError(null);
@@ -119,11 +116,10 @@ export function FileDropzone() {
     [processFile]
   );
 
-  // ── Column mapping step ───────────────────────────────────────────────────────
   if (step === 'mapping') {
     return (
       <div className="flex min-h-[calc(100vh-4rem)] items-start justify-center p-8">
-        <div className="w-full max-w-4xl animate-fade-in">
+        <div className="w-full max-w-4xl animate-fade-in-up">
           <ColumnMapper
             mapping={columnMapping}
             onMappingChange={setColumnMapping}
@@ -136,29 +132,30 @@ export function FileDropzone() {
     );
   }
 
-  // ── Upload step ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-muted/30 p-8">
-      <div className="w-full max-w-xl animate-fade-in space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden p-8">
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,249,0.95))]" />
+      <div className="absolute left-[16%] top-16 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(34,197,94,0.12),transparent_70%)] blur-[120px] animate-orb-drift" />
+      <div className="absolute bottom-10 right-[14%] h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(34,197,94,0.1),transparent_70%)] blur-[120px] animate-orb-drift" />
+
+      <div className="relative z-10 w-full max-w-xl space-y-6 animate-fade-in-up">
+        <div className="space-y-2 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-white/80 ring-1 ring-primary/15 shadow-[0_8px_24px_rgba(0,0,0,0.04)]">
             <FileSpreadsheet className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard Commercial</h1>
+          <h1 className="font-display text-4xl font-bold tracking-tight text-foreground">Dashboard Commercial</h1>
           <p className="text-muted-foreground">
             Analysez vos performances commerciales en temps réel
           </p>
         </div>
 
-        {/* Demo CTA */}
-        <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center space-y-3">
-          <div className="flex items-center justify-center gap-2 text-primary font-semibold">
+        <div className="crm-panel space-y-3 p-6 text-center">
+          <div className="flex items-center justify-center gap-2 font-semibold text-primary">
             <Sparkles className="h-5 w-5" />
             <span>Mode Démo</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Chargez un jeu de données fictif (12 clients, 5 commerciaux, 160 pièces sur 2024) et explorez toutes les fonctionnalités instantanément.
+            Chargez un jeu de données fictif et explorez toutes les fonctionnalités instantanément.
           </p>
           <Button
             onClick={handleLoadDemo}
@@ -180,14 +177,12 @@ export function FileDropzone() {
           </Button>
         </div>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <div className="h-px flex-1 bg-border" />
           <span>ou importez vos propres données</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
-        {/* Dropzone */}
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -203,7 +198,7 @@ export function FileDropzone() {
             </div>
           ) : (
             <>
-              <Upload className="mb-3 h-10 w-10 text-muted-foreground/50" />
+              <Upload className="mb-3 h-10 w-10 text-primary/60" />
               <p className="mb-1 font-medium">Glissez votre fichier Excel ici</p>
               <p className="mb-5 text-sm text-muted-foreground">Format .xlsx ou .xls</p>
               <label>
@@ -221,9 +216,8 @@ export function FileDropzone() {
           )}
         </div>
 
-        {/* Error */}
         {error && (
-          <div className="flex items-start gap-3 rounded-xl bg-destructive/10 p-4 text-destructive">
+          <div className="flex items-start gap-3 rounded-2xl border border-destructive/20 bg-destructive/10 p-4 text-destructive">
             <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>

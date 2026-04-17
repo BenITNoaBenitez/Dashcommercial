@@ -47,7 +47,7 @@ const KPI_DEFS: KpiDef[] = [
   { key: 'panierMoyen', label: 'Panier moyen', format: formatCurrency, higherIsBetter: true },
   { key: 'pipeline', label: 'Pipeline', format: formatCurrency, higherIsBetter: true },
   { key: 'forecastPondere', label: 'Forecast', format: formatCurrency, higherIsBetter: true },
-  { key: 'cycleVenteMoyen', label: 'Cycle vente', format: (v) => v ? `${formatNumber(v)} j` : 'N/A', higherIsBetter: false },
+  { key: 'cycleVenteMoyen', label: 'Cycle vente', format: (v) => (v ? `${formatNumber(v)} j` : 'N/A'), higherIsBetter: false },
 ];
 
 function EvolutionBadge({ current, previous, higherIsBetter }: { current: number; previous: number; higherIsBetter: boolean }) {
@@ -62,7 +62,7 @@ function EvolutionBadge({ current, previous, higherIsBetter }: { current: number
   return (
     <span className={cn(
       'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium',
-      isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+      isPositive ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
     )}>
       {diff > 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
       {diff > 0 ? '+' : ''}{diff.toFixed(1)}%
@@ -89,13 +89,13 @@ function SnapshotLabel({ snapshot, onRename, onDelete }: {
     return (
       <div className="flex items-center gap-1">
         <input
-          className="rounded border px-2 py-0.5 text-sm"
+          className="rounded-xl border border-primary/10 bg-white/80 px-2 py-0.5 text-sm"
           value={value}
-          onChange={e => setValue(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleSave()}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSave()}
           autoFocus
         />
-        <button onClick={handleSave} className="text-green-600 hover:text-green-800"><Check className="h-4 w-4" /></button>
+        <button onClick={handleSave} className="text-primary hover:text-[#16a34a]"><Check className="h-4 w-4" /></button>
         <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground"><X className="h-4 w-4" /></button>
       </div>
     );
@@ -119,23 +119,22 @@ export default function EvolutionPage() {
   if (importHistory.length === 0) {
     return (
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-8">
-        <div className="text-center animate-fade-in">
-          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
+        <div className="text-center animate-fade-in-up">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.04)] ring-1 ring-primary/15">
             <History className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="mb-2 text-2xl font-bold">Aucun historique</h1>
+          <h1 className="font-display mb-2 text-2xl font-bold">Aucun historique</h1>
           <p className="text-muted-foreground">
-            Importez au moins un fichier pour commencer à suivre l'évolution de vos KPIs.
+            Importez au moins un fichier pour commencer à suivre l&apos;évolution de vos KPIs.
           </p>
         </div>
       </div>
     );
   }
 
-  const snapshotA = importHistory.find(s => s.id === selectedA) ?? null;
-  const snapshotB = importHistory.find(s => s.id === selectedB) ?? null;
+  const snapshotA = importHistory.find((s) => s.id === selectedA) ?? null;
+  const snapshotB = importHistory.find((s) => s.id === selectedB) ?? null;
 
-  // Chart data: evolution of main KPIs across all imports
   const chartData = importHistory.map((s, i) => ({
     name: `#${i + 1}`,
     label: s.label,
@@ -148,15 +147,13 @@ export default function EvolutionPage() {
 
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight">Évolution</h1>
-        <p className="text-muted-foreground">
-          Suivez l'évolution de vos KPIs entre chaque import ({importHistory.length} import{importHistory.length > 1 ? 's' : ''} enregistré{importHistory.length > 1 ? 's' : ''})
+      <div className="page-header">
+        <h1 className="font-display text-2xl font-bold tracking-tight">Évolution</h1>
+        <p className="text-white/70">
+          Suivez l&apos;évolution de vos KPIs entre chaque import ({importHistory.length} import{importHistory.length > 1 ? 's' : ''} enregistré{importHistory.length > 1 ? 's' : ''})
         </p>
       </div>
 
-      {/* Evolution Charts */}
       <div className="mb-8 grid gap-6 lg:grid-cols-2">
         <div className="chart-container">
           <h3 className="mb-4 font-semibold">Évolution du CA Net & Marge</h3>
@@ -167,12 +164,12 @@ export default function EvolutionPage() {
               <YAxis tickFormatter={(val) => `${(val / 1000).toFixed(0)}k`} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip
                 formatter={(value: number, name: string) => [formatCurrency(value), name === 'caNet' ? 'CA Net' : name === 'marge' ? 'Marge' : 'Pipeline']}
-                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
+                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '16px' }}
               />
               <Legend />
               <Line type="monotone" dataKey="caNet" name="CA Net" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="marge" name="Marge" stroke="hsl(142, 76%, 36%)" strokeWidth={2} dot={{ r: 4 }} />
-              <Line type="monotone" dataKey="pipeline" name="Pipeline" stroke="hsl(38, 92%, 50%)" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="marge" name="Marge" stroke="#4ade80" strokeWidth={2} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="pipeline" name="Pipeline" stroke="#fcd34d" strokeWidth={2} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -185,27 +182,24 @@ export default function EvolutionPage() {
               <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
               <YAxis yAxisId="left" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
               <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
-              <Tooltip
-                contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '8px' }}
-              />
+              <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: '16px' }} />
               <Legend />
               <Bar yAxisId="left" dataKey="leads" name="Leads" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="tauxTransfo" name="Taux transfo. %" stroke="hsl(142, 76%, 36%)" strokeWidth={2} dot={{ r: 4 }} />
+              <Line yAxisId="right" type="monotone" dataKey="tauxTransfo" name="Taux transfo. %" stroke="#4ade80" strokeWidth={2} dot={{ r: 4 }} />
             </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      {/* Comparison Selector */}
-      <div className="mb-6 rounded-xl border bg-card p-6">
+      <div className="mb-6 rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         <h3 className="mb-4 font-semibold">Comparer deux imports</h3>
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex-1 min-w-[200px]">
+          <div className="min-w-[200px] flex-1">
             <label className="mb-1 block text-xs font-medium text-muted-foreground">Import précédent</label>
             <select
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-primary/10 bg-white/75 px-3 py-2 text-sm shadow-[0_4px_14px_rgba(15,23,42,0.04)]"
               value={selectedA ?? ''}
-              onChange={e => setSelectedA(e.target.value || null)}
+              onChange={(e) => setSelectedA(e.target.value || null)}
             >
               <option value="">Sélectionner...</option>
               {importHistory.map((s, i) => (
@@ -216,12 +210,12 @@ export default function EvolutionPage() {
 
           <ArrowRight className="mt-4 h-5 w-5 text-muted-foreground" />
 
-          <div className="flex-1 min-w-[200px]">
+          <div className="min-w-[200px] flex-1">
             <label className="mb-1 block text-xs font-medium text-muted-foreground">Import actuel</label>
             <select
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+              className="w-full rounded-xl border border-primary/10 bg-white/75 px-3 py-2 text-sm shadow-[0_4px_14px_rgba(15,23,42,0.04)]"
               value={selectedB ?? ''}
-              onChange={e => setSelectedB(e.target.value || null)}
+              onChange={(e) => setSelectedB(e.target.value || null)}
             >
               <option value="">Sélectionner...</option>
               {importHistory.map((s, i) => (
@@ -232,28 +226,23 @@ export default function EvolutionPage() {
         </div>
       </div>
 
-      {/* Comparison Table */}
       {snapshotA && snapshotB && (
-        <div className="mb-8 overflow-hidden rounded-xl border bg-card animate-fade-in">
+        <div className="mb-8 overflow-hidden rounded-3xl border border-primary/10 bg-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl animate-fade-in">
           <table className="w-full">
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground">KPI</th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {snapshotA.label}
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                  {snapshotB.label}
-                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-muted-foreground">{snapshotA.label}</th>
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wide text-muted-foreground">{snapshotB.label}</th>
                 <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">Évolution</th>
               </tr>
             </thead>
             <tbody>
-              {KPI_DEFS.map(kpi => {
+              {KPI_DEFS.map((kpi) => {
                 const valA = (snapshotA.kpis[kpi.key] as number) ?? 0;
                 const valB = (snapshotB.kpis[kpi.key] as number) ?? 0;
                 return (
-                  <tr key={kpi.key} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                  <tr key={kpi.key} className="border-b transition-colors hover:bg-muted/30 last:border-0">
                     <td className="px-6 py-3 text-sm font-medium">{kpi.label}</td>
                     <td className="px-6 py-3 text-right text-sm tabular-nums">{kpi.format(valA)}</td>
                     <td className="px-6 py-3 text-right text-sm font-semibold tabular-nums">{kpi.format(valB)}</td>
@@ -263,21 +252,20 @@ export default function EvolutionPage() {
                   </tr>
                 );
               })}
-              {/* Meta rows */}
-              <tr className="border-t-2 border-b hover:bg-muted/30 transition-colors">
+              <tr className="border-b border-t-2 transition-colors hover:bg-muted/30">
                 <td className="px-6 py-3 text-sm font-medium">Nb pièces</td>
                 <td className="px-6 py-3 text-right text-sm tabular-nums">{snapshotA.meta.totalPieces}</td>
                 <td className="px-6 py-3 text-right text-sm font-semibold tabular-nums">{snapshotB.meta.totalPieces}</td>
                 <td className="px-6 py-3 text-center">
-                  <EvolutionBadge current={snapshotB.meta.totalPieces} previous={snapshotA.meta.totalPieces} higherIsBetter={true} />
+                  <EvolutionBadge current={snapshotB.meta.totalPieces} previous={snapshotA.meta.totalPieces} higherIsBetter />
                 </td>
               </tr>
-              <tr className="border-b hover:bg-muted/30 transition-colors">
+              <tr className="border-b transition-colors hover:bg-muted/30">
                 <td className="px-6 py-3 text-sm font-medium">Nb clients</td>
                 <td className="px-6 py-3 text-right text-sm tabular-nums">{snapshotA.meta.nbClients}</td>
                 <td className="px-6 py-3 text-right text-sm font-semibold tabular-nums">{snapshotB.meta.nbClients}</td>
                 <td className="px-6 py-3 text-center">
-                  <EvolutionBadge current={snapshotB.meta.nbClients} previous={snapshotA.meta.nbClients} higherIsBetter={true} />
+                  <EvolutionBadge current={snapshotB.meta.nbClients} previous={snapshotA.meta.nbClients} higherIsBetter />
                 </td>
               </tr>
             </tbody>
@@ -285,14 +273,13 @@ export default function EvolutionPage() {
         </div>
       )}
 
-      {/* Import History List */}
-      <div className="rounded-xl border bg-card">
+      <div className="rounded-3xl border border-primary/10 bg-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
         <div className="border-b px-6 py-4">
           <h3 className="font-semibold">Historique des imports</h3>
         </div>
         <div className="divide-y">
           {importHistory.map((snapshot, index) => (
-            <div key={snapshot.id} className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors">
+            <div key={snapshot.id} className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-muted/30">
               <div className="flex items-center gap-4">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
                   {index + 1}
@@ -322,7 +309,11 @@ export default function EvolutionPage() {
                 </Button>
                 <div className="text-right text-xs text-muted-foreground">
                   {new Date(snapshot.date).toLocaleDateString('fr-FR', {
-                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
                   })}
                 </div>
               </div>

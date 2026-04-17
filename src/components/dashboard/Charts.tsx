@@ -14,12 +14,12 @@ import { useData } from '@/contexts/DataContext';
 import { formatCurrency, formatPercent } from '@/lib/kpiCalculator';
 
 const CHART_COLORS = [
-  'hsl(217, 91%, 50%)',
-  'hsl(174, 72%, 40%)',
-  'hsl(142, 76%, 36%)',
-  'hsl(38, 92%, 50%)',
-  'hsl(262, 83%, 58%)',
-  'hsl(0, 84%, 60%)',
+  '#22c55e',
+  '#4ade80',
+  '#93c5fd',
+  '#fcd34d',
+  '#94a3b8',
+  '#f87171',
 ];
 
 export function CAParMoisChart() {

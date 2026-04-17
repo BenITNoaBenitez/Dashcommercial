@@ -17,14 +17,14 @@ import { toast } from '@/hooks/use-toast';
 export default function SettingsPage() {
   const { settings, updateSettings, parsedData } = useData();
   const [activeTab, setActiveTab] = useState('objectifs');
-  
+
   const [objectifCA, setObjectifCA] = useState(settings.objectifCA.toString());
   const [modeMargeType, setModeMargeType] = useState(settings.modeMargeType);
   const [ponderations, setPonderations] = useState(settings.ponderations);
   const [margesFamille, setMargesFamille] = useState(settings.margesFamille);
   const [statutsPipeline, setStatutsPipeline] = useState(settings.statutsPipeline);
   const [newStatut, setNewStatut] = useState('');
-  
+
   const handleSave = () => {
     updateSettings({
       objectifCA: parseFloat(objectifCA) || 0,
@@ -38,47 +38,46 @@ export default function SettingsPage() {
       description: 'Les modifications ont été appliquées.',
     });
   };
-  
+
   const updatePonderation = (index: number, poids: number) => {
     const updated = [...ponderations];
     updated[index] = { ...updated[index], poids };
     setPonderations(updated);
   };
-  
+
   const updateMargeFamille = (index: number, tauxMarge: number) => {
     const updated = [...margesFamille];
     updated[index] = { ...updated[index], tauxMarge };
     setMargesFamille(updated);
   };
-  
+
   const addStatutPipeline = () => {
     if (newStatut && !statutsPipeline.includes(newStatut)) {
       setStatutsPipeline([...statutsPipeline, newStatut]);
       setNewStatut('');
     }
   };
-  
+
   const removeStatutPipeline = (statut: string) => {
-    setStatutsPipeline(statutsPipeline.filter(s => s !== statut));
+    setStatutsPipeline(statutsPipeline.filter((s) => s !== statut));
   };
-  
+
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="page-header flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Paramètres</h1>
-          <p className="text-muted-foreground">
+          <h1 className="font-display text-2xl font-bold tracking-tight">Paramètres</h1>
+          <p className="text-white/70">
             Configurez les objectifs, pondérations et marges
           </p>
         </div>
-        
+
         <Button onClick={handleSave}>
           <Save className="mr-2 h-4 w-4" />
           Sauvegarder
         </Button>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="objectifs">Objectifs</TabsTrigger>
@@ -86,10 +85,9 @@ export default function SettingsPage() {
           <TabsTrigger value="marges">Marges</TabsTrigger>
           <TabsTrigger value="pipeline">Pipeline</TabsTrigger>
         </TabsList>
-        
-        {/* Objectifs */}
+
         <TabsContent value="objectifs">
-          <div className="max-w-md rounded-xl border border-border bg-card p-6">
+          <div className="max-w-md rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
             <h3 className="mb-4 font-semibold">Objectif CA</h3>
             <div className="space-y-4">
               <div>
@@ -103,21 +101,20 @@ export default function SettingsPage() {
                   className="mt-2"
                 />
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Utilisé pour calculer le taux d'atteinte objectif
+                  Utilisé pour calculer le taux d&apos;atteinte objectif
                 </p>
               </div>
             </div>
           </div>
         </TabsContent>
-        
-        {/* Pondérations */}
+
         <TabsContent value="ponderations">
-          <div className="max-w-lg rounded-xl border border-border bg-card p-6">
+          <div className="max-w-lg rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
             <h3 className="mb-4 font-semibold">Pondérations par statut</h3>
             <p className="mb-4 text-sm text-muted-foreground">
               Coefficient appliqué aux devis pour le forecast pondéré
             </p>
-            
+
             <div className="space-y-4">
               {ponderations.map((p, index) => (
                 <div key={p.statut} className="flex items-center gap-4">
@@ -139,11 +136,10 @@ export default function SettingsPage() {
             </div>
           </div>
         </TabsContent>
-        
-        {/* Marges */}
+
         <TabsContent value="marges">
           <div className="max-w-lg space-y-6">
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
               <h3 className="mb-4 font-semibold">Mode de calcul</h3>
               <Select
                 value={modeMargeType}
@@ -158,14 +154,14 @@ export default function SettingsPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             {modeMargeType === 'taux' && (
-              <div className="rounded-xl border border-border bg-card p-6">
+              <div className="rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
                 <h3 className="mb-4 font-semibold">Taux de marge par famille</h3>
-                
+
                 {margesFamille.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
-                    {parsedData 
+                    {parsedData
                       ? 'Aucune famille détectée dans les données.'
                       : 'Importez des données pour voir les familles.'
                     }
@@ -190,9 +186,9 @@ export default function SettingsPage() {
                 )}
               </div>
             )}
-            
+
             {modeMargeType === 'cout' && (
-              <div className="rounded-xl border border-border bg-card p-6">
+              <div className="rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
                 <h3 className="mb-4 font-semibold">Coûts par pièce</h3>
                 <p className="text-sm text-muted-foreground">
                   Fonctionnalité à venir: import CSV des coûts par numéro de pièce.
@@ -201,18 +197,17 @@ export default function SettingsPage() {
             )}
           </div>
         </TabsContent>
-        
-        {/* Pipeline */}
+
         <TabsContent value="pipeline">
-          <div className="max-w-lg rounded-xl border border-border bg-card p-6">
+          <div className="max-w-lg rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
             <h3 className="mb-4 font-semibold">Statuts du pipeline</h3>
             <p className="mb-4 text-sm text-muted-foreground">
               Statuts considérés comme "vivants" pour le calcul du pipeline
             </p>
-            
+
             <div className="space-y-4">
               {statutsPipeline.map((statut) => (
-                <div key={statut} className="flex items-center justify-between rounded-lg bg-muted p-3">
+                <div key={statut} className="flex items-center justify-between rounded-2xl bg-muted/80 p-3">
                   <span>{statut}</span>
                   <Button
                     variant="ghost"
@@ -223,7 +218,7 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               ))}
-              
+
               <div className="flex gap-2">
                 <Input
                   placeholder="Nouveau statut"

@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Euro, 
-  Target, 
-  TrendingUp, 
-  Users, 
-  Percent, 
+import {
+  Euro,
+  Target,
+  TrendingUp,
+  Users,
+  Percent,
   ShoppingCart,
   Layers,
   Calculator,
   Clock,
-  Download
+  Download,
 } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { KPICard } from '@/components/dashboard/KPICard';
@@ -24,16 +24,16 @@ import {
 } from '@/components/dashboard/Charts';
 import { formatCurrency, formatPercent, formatNumber, formatPeriodLabel } from '@/lib/kpiCalculator';
 import { Button } from '@/components/ui/button';
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { 
-  exportKPIsToCSV, 
-  exportKPIsToJSON, 
-  downloadFile 
+import {
+  exportKPIsToCSV,
+  exportKPIsToJSON,
+  downloadFile,
 } from '@/lib/exportUtils';
 
 export default function Dashboard() {
@@ -49,36 +49,35 @@ export default function Dashboard() {
   if (isRestoring || !hasData || !kpis) {
     return null;
   }
-  
+
   const periodLabel = formatPeriodLabel(filters.dateDebut, filters.dateFin);
-  
+
   const handleExport = (format: 'csv' | 'json') => {
-    const content = format === 'csv' 
+    const content = format === 'csv'
       ? exportKPIsToCSV(kpis)
       : exportKPIsToJSON(kpis);
     const mimeType = format === 'csv' ? 'text/csv' : 'application/json';
     downloadFile(content, `kpis-export.${format}`, mimeType);
   };
-  
+
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="page-header flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
             Tableau de bord
           </h1>
-          <p className="text-muted-foreground">
-            Vue d'ensemble de vos indicateurs commerciaux
+          <p className="text-white/70">
+            Vue d&apos;ensemble de vos indicateurs commerciaux
           </p>
         </div>
-        
+
         <div className="flex items-center gap-4">
           <DataQualityBadge />
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">
+              <Button variant="outline" className="border-white/10 bg-white/10 text-white hover:border-white/20 hover:bg-white/15 hover:text-white">
                 <Download className="mr-2 h-4 w-4" />
                 Exporter
               </Button>
@@ -94,13 +93,11 @@ export default function Dashboard() {
           </DropdownMenu>
         </div>
       </div>
-      
-      {/* Filters */}
+
       <div className="mb-8">
         <FilterBar />
       </div>
-      
-      {/* KPI Cards */}
+
       <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         <KPICard
           label="CA Net"
@@ -109,12 +106,12 @@ export default function Dashboard() {
           tooltip="Somme des factures moins les avoirs sur la période sélectionnée"
           icon={<Euro className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Taux d'atteinte"
           value={formatPercent(kpis.tauxAtteinte)}
           periodLabel={periodLabel}
-          subValue={settings.objectifCA > 0 
+          subValue={settings.objectifCA > 0
             ? `Objectif: ${formatCurrency(settings.objectifCA)}`
             : 'Objectif non défini'
           }
@@ -122,7 +119,7 @@ export default function Dashboard() {
           variant={kpis.tauxAtteinte >= 100 ? 'success' : 'default'}
           icon={<Target className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Marge"
           value={formatCurrency(kpis.marge)}
@@ -132,7 +129,7 @@ export default function Dashboard() {
           variant="success"
           icon={<TrendingUp className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Leads entrants"
           value={formatNumber(kpis.leadsEntrants)}
@@ -140,7 +137,7 @@ export default function Dashboard() {
           tooltip="Nombre de devis créés sur la période"
           icon={<Users className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Taux transformation"
           value={formatPercent(kpis.tauxTransformation)}
@@ -149,7 +146,7 @@ export default function Dashboard() {
           variant="accent"
           icon={<Percent className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Panier moyen"
           value={formatCurrency(kpis.panierMoyen)}
@@ -157,7 +154,7 @@ export default function Dashboard() {
           tooltip="CA net divisé par le nombre de factures"
           icon={<ShoppingCart className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Pipeline"
           value={formatCurrency(kpis.pipeline)}
@@ -165,7 +162,7 @@ export default function Dashboard() {
           tooltip="Total des devis avec statuts vivants"
           icon={<Layers className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Forecast pondéré"
           value={formatCurrency(kpis.forecastPondere)}
@@ -173,10 +170,10 @@ export default function Dashboard() {
           tooltip="Pipeline pondéré par probabilité de conversion"
           icon={<Calculator className="h-5 w-5" />}
         />
-        
+
         <KPICard
           label="Cycle de vente"
-          value={kpis.cycleVenteMoyen 
+          value={kpis.cycleVenteMoyen
             ? `${formatNumber(kpis.cycleVenteMoyen)} jours`
             : 'N/A'
           }
@@ -185,8 +182,7 @@ export default function Dashboard() {
           icon={<Clock className="h-5 w-5" />}
         />
       </div>
-      
-      {/* Charts */}
+
       <div className="grid gap-6 lg:grid-cols-2">
         <CAParMoisChart />
         <PipelineChart />

@@ -10,11 +10,11 @@ import { cn } from '@/lib/utils';
 import { useData } from '@/contexts/DataContext';
 
 const navItems = [
-  { icon: Upload,          label: 'Import',      path: '/',          requiresData: false },
-  { icon: LayoutDashboard, label: 'Dashboard',   path: '/dashboard', requiresData: true  },
-  { icon: FileBarChart,    label: 'Données',     path: '/data',      requiresData: true  },
-  { icon: TrendingUp,      label: 'Évolution',   path: '/evolution', requiresData: false },
-  { icon: Settings,        label: 'Paramètres',  path: '/settings',  requiresData: false },
+  { icon: Upload, label: 'Import', path: '/', requiresData: false },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard', requiresData: true },
+  { icon: FileBarChart, label: 'Données', path: '/data', requiresData: true },
+  { icon: TrendingUp, label: 'Évolution', path: '/evolution', requiresData: false },
+  { icon: Settings, label: 'Paramètres', path: '/settings', requiresData: false },
 ];
 
 export function AppSidebar() {
@@ -22,18 +22,19 @@ export function AppSidebar() {
   const { hasData } = useData();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-sidebar flex flex-col">
-      {/* Brand */}
-      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-5">
+    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col overflow-hidden border-r border-sidebar-border bg-[linear-gradient(180deg,#182B16,#0d1a0c)] text-sidebar-foreground shadow-2xl">
+      <div className="absolute inset-x-0 top-0 h-1 bg-[length:200%_auto] animate-gradient-x" style={{ backgroundImage: 'var(--top-accent-gradient)' }} />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(74,222,128,0.16),transparent_36%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.12),transparent_40%)]" />
+
+      <div className="relative flex h-20 items-center gap-3 border-b border-sidebar-border px-5 backdrop-blur-xl">
         <img src="/Dashcommercial/noa-logo.png" alt="Logo Noa" className="h-9 w-auto object-contain" />
         <div>
-          <p className="text-sm font-semibold text-sidebar-foreground leading-tight">Dashboard</p>
-          <p className="text-xs text-sidebar-muted leading-tight">Commercial</p>
+          <p className="font-display text-sm font-semibold leading-tight text-sidebar-foreground">Dashboard</p>
+          <p className="text-xs leading-tight text-sidebar-muted">Commercial</p>
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-0.5">
+      <nav className="relative flex-1 space-y-1 p-3">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           const isDisabled = item.requiresData && !hasData;
@@ -63,20 +64,19 @@ export function AppSidebar() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="border-t border-sidebar-border p-4">
+      <div className="relative border-t border-sidebar-border p-4">
         <a
           href="https://cal.com/noa-benitez-yvd7t0/rdv-sans-engagement?overlayCalendar=true"
           target="_blank"
           rel="noreferrer"
-          className="mb-3 block rounded-xl border border-sidebar-primary/40 bg-sidebar-primary/15 px-4 py-3 text-center text-sm font-bold text-sidebar-primary shadow-sm transition-colors hover:bg-sidebar-primary/25"
+          className="mb-3 block rounded-2xl border border-sidebar-primary/40 bg-white/10 px-4 py-3 text-center text-sm font-bold text-[#4ade80] shadow-sm transition-all duration-300 hover:bg-white/15 hover:shadow-[0_0_20px_rgba(34,197,94,0.2)]"
         >
           Demander mon outil sur mesure
         </a>
-        <div className="rounded-lg bg-sidebar-accent/50 p-3 text-center">
-          <p className="text-xs text-sidebar-muted leading-relaxed">
+        <div className="glass-panel rounded-2xl border border-white/5 bg-white/5 p-3 text-center">
+          <p className="text-xs leading-relaxed text-sidebar-muted">
             {hasData ? (
-              <span className="text-sidebar-primary font-medium">● Données chargées</span>
+              <span className="font-medium text-[#4ade80]">● Données chargées</span>
             ) : (
               'Importez des données ou lancez la démo pour commencer'
             )}

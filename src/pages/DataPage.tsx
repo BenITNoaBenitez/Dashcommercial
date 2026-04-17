@@ -26,14 +26,14 @@ export default function DataPage() {
   if (isRestoring || !hasData || !dataQuality) {
     return null;
   }
-  
+
   const filteredPieces = getFilteredPieces();
-  
+
   const handleExport = () => {
     const csv = exportPiecesToCSV(filteredPieces);
     downloadFile(csv, 'pieces-export.csv', 'text/csv');
   };
-  
+
   const getTypeBadgeClass = (type: string) => {
     switch (type) {
       case 'Facture':
@@ -48,33 +48,32 @@ export default function DataPage() {
         return 'badge-status';
     }
   };
-  
+
   return (
     <div className="p-8">
-      {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="page-header flex items-center justify-between gap-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="font-display text-2xl font-bold tracking-tight">
             Données
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-white/70">
             {filteredPieces.length} pièces affichées
           </p>
         </div>
-        
+
         <Button onClick={handleExport}>
           <Download className="mr-2 h-4 w-4" />
           Exporter CSV
         </Button>
       </div>
-      
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
           <TabsTrigger value="pieces">Pièces</TabsTrigger>
           <TabsTrigger value="quality">
             Qualité des données
-            {(dataQuality.datesInvalides > 0 || 
-              dataQuality.refsVides > 0 || 
+            {(dataQuality.datesInvalides > 0 ||
+              dataQuality.refsVides > 0 ||
               dataQuality.facturesSansDevis > 0) && (
               <span className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-warning text-[10px] font-bold text-warning-foreground">
                 !
@@ -82,15 +81,13 @@ export default function DataPage() {
             )}
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="pieces">
-          {/* Filters */}
           <div className="mb-6">
             <FilterBar />
           </div>
-          
-          {/* Table */}
-          <div className="rounded-xl border border-border bg-card">
+
+          <div className="overflow-hidden rounded-3xl border border-primary/10 bg-white/80 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
             <ScrollArea className="h-[600px]">
               <table className="data-table">
                 <thead>
@@ -116,7 +113,7 @@ export default function DataPage() {
                       </td>
                       <td className="text-muted-foreground">{piece.statut}</td>
                       <td>
-                        {piece.datePiece 
+                        {piece.datePiece
                           ? format(piece.datePiece, 'dd/MM/yyyy', { locale: fr })
                           : '-'
                         }
@@ -125,7 +122,7 @@ export default function DataPage() {
                         {formatCurrency(piece.totalHT)}
                       </td>
                       <td className="text-right font-mono">
-                        {piece.soldeDu !== null 
+                        {piece.soldeDu !== null
                           ? formatCurrency(piece.soldeDu)
                           : '-'
                         }
@@ -141,13 +138,12 @@ export default function DataPage() {
             </ScrollArea>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="quality">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {/* Total pièces */}
-            <div className="rounded-xl border border-border bg-card p-6">
+            <div className="rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
                   <CheckCircle className="h-6 w-6 text-primary" />
                 </div>
                 <div>
@@ -156,20 +152,17 @@ export default function DataPage() {
                 </div>
               </div>
             </div>
-            
-            {/* Dates invalides */}
+
             <div className={cn(
-              'rounded-xl border bg-card p-6',
-              dataQuality.datesInvalides > 0 
-                ? 'border-warning/50 bg-warning/5' 
-                : 'border-border'
+              'rounded-3xl border bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl',
+              dataQuality.datesInvalides > 0
+                ? 'border-warning/50 bg-warning/5'
+                : 'border-primary/10'
             )}>
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-lg',
-                  dataQuality.datesInvalides > 0 
-                    ? 'bg-warning/10' 
-                    : 'bg-success/10'
+                  'flex h-12 w-12 items-center justify-center rounded-xl',
+                  dataQuality.datesInvalides > 0 ? 'bg-warning/10' : 'bg-success/10'
                 )}>
                   {dataQuality.datesInvalides > 0 ? (
                     <AlertTriangle className="h-6 w-6 text-warning" />
@@ -188,20 +181,17 @@ export default function DataPage() {
                 </p>
               )}
             </div>
-            
-            {/* Refs vides */}
+
             <div className={cn(
-              'rounded-xl border bg-card p-6',
-              dataQuality.refsVides > 0 
-                ? 'border-warning/50 bg-warning/5' 
-                : 'border-border'
+              'rounded-3xl border bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl',
+              dataQuality.refsVides > 0
+                ? 'border-warning/50 bg-warning/5'
+                : 'border-primary/10'
             )}>
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-lg',
-                  dataQuality.refsVides > 0 
-                    ? 'bg-warning/10' 
-                    : 'bg-success/10'
+                  'flex h-12 w-12 items-center justify-center rounded-xl',
+                  dataQuality.refsVides > 0 ? 'bg-warning/10' : 'bg-success/10'
                 )}>
                   {dataQuality.refsVides > 0 ? (
                     <AlertTriangle className="h-6 w-6 text-warning" />
@@ -220,20 +210,17 @@ export default function DataPage() {
                 </p>
               )}
             </div>
-            
-            {/* Factures sans devis */}
+
             <div className={cn(
-              'rounded-xl border bg-card p-6',
-              dataQuality.facturesSansDevis > 0 
-                ? 'border-info/50 bg-info/5' 
-                : 'border-border'
+              'rounded-3xl border bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl',
+              dataQuality.facturesSansDevis > 0
+                ? 'border-info/50 bg-info/5'
+                : 'border-primary/10'
             )}>
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-lg',
-                  dataQuality.facturesSansDevis > 0 
-                    ? 'bg-info/10' 
-                    : 'bg-success/10'
+                  'flex h-12 w-12 items-center justify-center rounded-xl',
+                  dataQuality.facturesSansDevis > 0 ? 'bg-info/10' : 'bg-success/10'
                 )}>
                   {dataQuality.facturesSansDevis > 0 ? (
                     <AlertTriangle className="h-6 w-6 text-info" />
@@ -248,24 +235,21 @@ export default function DataPage() {
               </div>
               {dataQuality.facturesSansDevis > 0 && (
                 <p className="mt-3 text-sm text-muted-foreground">
-                  Ces factures n'ont pas de devis avec même client+référence.
+                  Ces factures n&apos;ont pas de devis avec même client+référence.
                 </p>
               )}
             </div>
-            
-            {/* Devis sans client */}
+
             <div className={cn(
-              'rounded-xl border bg-card p-6',
-              dataQuality.devisSansClient > 0 
-                ? 'border-destructive/50 bg-destructive/5' 
-                : 'border-border'
+              'rounded-3xl border bg-white/80 p-6 shadow-[0_8px_24px_rgba(0,0,0,0.04)] backdrop-blur-xl',
+              dataQuality.devisSansClient > 0
+                ? 'border-destructive/50 bg-destructive/5'
+                : 'border-primary/10'
             )}>
               <div className="flex items-center gap-4">
                 <div className={cn(
-                  'flex h-12 w-12 items-center justify-center rounded-lg',
-                  dataQuality.devisSansClient > 0 
-                    ? 'bg-destructive/10' 
-                    : 'bg-success/10'
+                  'flex h-12 w-12 items-center justify-center rounded-xl',
+                  dataQuality.devisSansClient > 0 ? 'bg-destructive/10' : 'bg-success/10'
                 )}>
                   {dataQuality.devisSansClient > 0 ? (
                     <AlertTriangle className="h-6 w-6 text-destructive" />
